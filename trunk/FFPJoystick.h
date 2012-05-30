@@ -15,9 +15,10 @@
 #include <avr/interrupt.h>
 #include <string.h>
 #include <includes.h>
+#include <util/delay.h>
 
 extern "C"{
-//#include "ffb.h"
+#include "ffb.h"
 #include "3DPro.h"
 //#include "Joystick.h"
 //#include "debug.h"
@@ -25,7 +26,9 @@ extern "C"{
 
 
 
-//extern	uint8_t enableAutoCenterFfbData_1[];
+extern	uint8_t enableAutoCenterFfbData_1[];
+extern  uint8_t disableAutoCenterFfbData_1[];
+extern  uint8_t disableAutoCenterFfbData_2[];
 
 // library interface description
 class FFPJoystick
@@ -33,7 +36,9 @@ class FFPJoystick
   // user-accessible "public" interface
   public:
     FFPJoystick();
-	void SetupHardware(void);
+	void EnableAutoCenter();
+	void DisableAutoCenter();
+	void SetupHardware();
 	void Poll();
   
 		// Joystick Input Report
