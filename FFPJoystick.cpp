@@ -41,7 +41,25 @@ clock_prescale_set(clock_div_1);
     // Initialize..
 
     init_hw() ;					// hardware. Note: defined as naked !
-sei();
+
+	WaitMs(1000);
+	// Force feedback
+	FfbInitMidi();	
+	sei();	
+}
+
+void FFPJoystick::EnableAutoCenter(void)
+{
+	FfbSendData(enableAutoCenterFfbData_1, 2);	
+}
+
+void FFPJoystick::DisableAutoCenter(void)
+{
+	FfbSendData(disableAutoCenterFfbData_1, 2);//second parameter is number of bytes
+	_delay_ms(35);
+	_delay_ms(40);
+	FfbSendData(disableAutoCenterFfbData_2, 8);//would like to use sizeof but can't,
+											   //since these variables are declared elsewhere
 }
 
 void FFPJoystick::Poll(void)
