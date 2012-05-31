@@ -62,6 +62,66 @@ void FFPJoystick::DisableAutoCenter(void)
 											   //since these variables are declared elsewhere
 }
 
+void FFPJoystick::forceTest()
+{
+/*
+	uint8_t command;	// always 0x23	-- start counting checksum from here
+	uint8_t waveForm;	// 2=sine, 5=Square, 6=RampUp, 7=RampDown, 8=Triange, 0x12=Constant
+	uint8_t unknown1;	// ? always 0x7F
+	uint16_t duration;	// unit=2ms
+	uint16_t unknown2;	// ? always 0x0000
+	uint16_t direction;
+	uint8_t	unknown3[5];	// ? always 7f 64 00 10 4e
+	uint8_t attackLevel;
+	uint16_t	attackTime;
+	uint8_t		magnitude;
+	uint16_t	fadeTime;
+	uint8_t	fadeLevel;
+	uint8_t	waveLength;	// 0x6F..0x01 => 1/Hz
+	uint8_t unknown5;	// ? always 0x00
+	uint16_t param1;	// Varies by effect type; Constant: positive=7f 00, negative=01 01, Other effects: 01 01
+	uint16_t param2;	// Varies by effect type; Constant: 00 00, Other effects 01 01
+	} FFP_MIDI_Effect_Basic;*/
+	/*
+	FFP_MIDI_Effect_Basic test;
+	FFP_MIDI_Effect_Basic* midi_data = &test;
+	
+		midi_data->magnitude = 0x7f;
+		midi_data->waveLength = 0x6f;
+		midi_data->waveForm = 0x02;
+		midi_data->attackLevel = 0x00;
+		midi_data->attackTime = 0x0000;
+		midi_data->fadeLevel = 0x00;
+		midi_data->fadeTime = 0x0000;
+
+		// Constants
+		midi_data->command = 0x23;
+		midi_data->unknown1 = 0x7F;
+		midi_data->unknown2 = 0x0000;
+		midi_data->unknown3[0] = 0x7F;
+		midi_data->unknown3[1] = 0x64;
+		midi_data->unknown3[2] = 0x00;
+		midi_data->unknown3[3] = 0x10;
+		midi_data->unknown3[4] = 0x4E;
+
+		if (midi_data->waveForm == 0x12)	// constant
+			midi_data->param2 = 0x0000;
+		else
+			midi_data->param2 = 0x0101;	*/
+	
+	// All effects data start with this data
+uint8_t constantLeftFfbData[] =
+	{
+		0xf0,	// define
+			0x00, 0x01, 0x0a, 0x01, 0x23, 0x12, 0x7f, 0x5a, 0x19, 0x00, 0x00, 0x0e, 0x02, 0x7f, 0x64, 0x00, 0x10, 0x4e, 0x7f, 0x00, 0x00, 0x7f, 0x5a, 0x19, 0x7f, 0x01, 0x00, 0x7f, 0x00, 0x00, 0x00, 0x18,
+		0xf7,
+		0xb5, 0x20, 0x02	// play
+	};
+	//FfbSendSysEx((uint8_t*) midi_data, sizeof(FFP_MIDI_Effect_Basic));
+	//FfbSendEffectOper(eid, 0x20);	
+	FfbSendData(constantLeftFfbData,sizeof(constantLeftFfbData));
+}
+
 void FFPJoystick::Poll(void)
 {
 	SetTMPS( 0, 64 ) ;		// Set T0 prescaler to / 64 for query
