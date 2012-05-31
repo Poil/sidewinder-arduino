@@ -40,8 +40,9 @@ class FFPJoystick
 	void DisableAutoCenter();
 	void SetupHardware();
 	void Poll();
-  
-		// Joystick Input Report
+	void forceTest();
+	 
+	// Joystick Input Report
 	uint8_t	reportId;	// =1
 	int16_t  X;
 	int16_t  Y;
