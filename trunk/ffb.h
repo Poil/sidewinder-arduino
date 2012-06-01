@@ -268,6 +268,7 @@ void FfbSendData(uint8_t *data, uint16_t len);
 
 //this function wasn't in header before
 void FfbSendSysEx(void *midi_data, uint16_t len);
+void FfbSendEffectOper(uint8_t effectId, uint8_t operation);
 
 // Debugging
 //	<index> should be pointer to an index variable whose value should be set to 0 to start iterating.
