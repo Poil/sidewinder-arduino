@@ -52,6 +52,8 @@ class FFPJoystick
 	uint8_t  Throttle;
 	uint16_t Button;
 	uint8_t Hat;
+	uint8_t waveTest;
+	int effectId;
 };
 
 #endif
