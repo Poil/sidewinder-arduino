@@ -86,14 +86,15 @@ void FFPJoystick::forceTest()
 	FFP_MIDI_Effect_Basic test;
 	FFP_MIDI_Effect_Basic* midi_data = &test;
 	
-		midi_data->duration = 0x5a19;
-		midi_data->magnitude = 0x7f;
-		midi_data->waveLength = 0x01;
+		midi_data->duration = 0x195a;
+		midi_data->magnitude = 0x16;
+		midi_data->waveLength = 0x17;
 		midi_data->waveForm = 0x02;
 		midi_data->attackLevel = 0x7f;
 		midi_data->attackTime = 0x0000;
 		midi_data->fadeLevel = 0x7f;
-		midi_data->fadeTime = 0x5a19;
+		midi_data->fadeTime = 0x195a;
+		midi_data->direction = 0x0000;
 
 		// Constants
 		midi_data->command = 0x23;
@@ -104,11 +105,15 @@ void FFPJoystick::forceTest()
 		midi_data->unknown3[2] = 0x00;
 		midi_data->unknown3[3] = 0x10;
 		midi_data->unknown3[4] = 0x4E;
+		midi_data->unknown5 = 0x00;
+		
+		midi_data->param1 = 0x007f;
 
 		if (midi_data->waveForm == 0x12)	// constant
 			midi_data->param2 = 0x0000;
 		else
 			midi_data->param2 = 0x0101;	
+			
 	
 	// All effects data start with this data
 uint8_t constantLeftFfbData[] =
@@ -124,10 +129,10 @@ uint8_t sineFfbData[] =
 		/*0xf0,	// define
 			0x00, 0x01, 0x0a, 0x01, //start sequence*/
 			0x23,//command
-			0x05,//square
-			0x7f,//always same
+			0x02,//square
+			0x7f,//unknown1
 			0x5a, 0x19,//duration in 2ms intervals
-			0x00, 0x00,//unknown
+			0x00, 0x00,//unknown2
 			0x00, 0x00,//direction
 			0x7f, 0x64, 0x00, 0x10, 0x4e,//unknown 3
 			0x7f,//envelope attack level
@@ -142,7 +147,7 @@ uint8_t sineFfbData[] =
 		0xf7,
 		0xb5, 0x20, 0x02*/	// play
 	};	
-	FfbSendSysEx((uint8_t*) sineFfbData, sizeof(sineFfbData));
+	FfbSendSysEx((uint8_t*) midi_data, sizeof(sineFfbData));
 	FfbSendEffectOper(2, 0x20);	
 	//FfbSendData(sineFfbData,sizeof(sineFfbData));
 }
