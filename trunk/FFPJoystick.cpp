@@ -19,6 +19,7 @@
 FFPJoystick::FFPJoystick()
 {
 SetupHardware();
+effectId = 2;
 }
 
 /** Configures the board hardware and chip peripherals for the functionality. */
@@ -86,9 +87,9 @@ void FFPJoystick::forceTest()
 	FFP_MIDI_Effect_Basic test;
 	FFP_MIDI_Effect_Basic* midi_data = &test;
 	
-		midi_data->duration = 0x195a;
-		midi_data->magnitude = 0x16;
-		midi_data->waveLength = 0x17;
+		midi_data->duration = UsbUint16ToMidiUint14(500);//100 ms
+		midi_data->magnitude = 40;
+		midi_data->waveLength = waveTest;
 		midi_data->waveForm = 0x02;
 		midi_data->attackLevel = 0x7f;
 		midi_data->attackTime = 0x0000;
@@ -148,7 +149,8 @@ uint8_t sineFfbData[] =
 		0xb5, 0x20, 0x02*/	// play
 	};	
 	FfbSendSysEx((uint8_t*) midi_data, sizeof(sineFfbData));
-	FfbSendEffectOper(2, 0x20);	
+	FfbSendEffectOper(effectId, 0x20);	
+	effectId++;
 	//FfbSendData(sineFfbData,sizeof(sineFfbData));
 }
 
