@@ -121,8 +121,8 @@ uint8_t constantLeftFfbData[] =
 	
 uint8_t sineFfbData[] =
 	{
-		0xf0,	// define
-			0x00, 0x01, 0x0a, 0x01, //start sequence
+		/*0xf0,	// define
+			0x00, 0x01, 0x0a, 0x01, //start sequence*/
 			0x23,//command
 			0x05,//square
 			0x7f,//always same
@@ -132,19 +132,19 @@ uint8_t sineFfbData[] =
 			0x7f, 0x64, 0x00, 0x10, 0x4e,//unknown 3
 			0x7f,//envelope attack level
 			0x00,0x00,//envelope attack time
-			0x7f,//magnitude
+			0x16,//magnitude
 			0x5a,0x19,//envelope fade time
 			0x7f,//envelope fade level
-			0x01,//wavelength 
+			0x17,//wavelength 
 			0x00,//constant dir
 			0x7f,//constant dir
-			0x00, 0x01, 0x01, 0x33,
+			0x00, 0x01, 0x01/*, 0x33,
 		0xf7,
-		0xb5, 0x20, 0x02	// play
+		0xb5, 0x20, 0x02*/	// play
 	};	
-	//FfbSendSysEx((uint8_t*) constantLeftFfbData, sizeof(constantLeftFfbData));
-	//FfbSendEffectOper(2, 0x20);	
-	FfbSendData(sineFfbData,sizeof(sineFfbData));
+	FfbSendSysEx((uint8_t*) sineFfbData, sizeof(sineFfbData));
+	FfbSendEffectOper(2, 0x20);	
+	//FfbSendData(sineFfbData,sizeof(sineFfbData));
 }
 
 void FFPJoystick::Poll(void)
