@@ -122,7 +122,8 @@ uint8_t constantLeftFfbData[] =
 uint8_t sineFfbData[] =
 	{
 		0xf0,	// define
-			0x00, 0x01, 0x0a, 0x01, 0x23,//start sequence
+			0x00, 0x01, 0x0a, 0x01, //start sequence
+			0x23,//command
 			0x05,//square
 			0x7f,//always same
 			0x5a, 0x19,//duration in 2ms intervals
@@ -141,9 +142,9 @@ uint8_t sineFfbData[] =
 		0xf7,
 		0xb5, 0x20, 0x02	// play
 	};	
-	FfbSendSysEx((uint8_t*) midi_data, sizeof(FFP_MIDI_Effect_Basic));
-	FfbSendEffectOper(2, 0x20);	
-	//FfbSendData(sineFfbData,sizeof(sineFfbData));
+	//FfbSendSysEx((uint8_t*) constantLeftFfbData, sizeof(constantLeftFfbData));
+	//FfbSendEffectOper(2, 0x20);	
+	FfbSendData(sineFfbData,sizeof(sineFfbData));
 }
 
 void FFPJoystick::Poll(void)
