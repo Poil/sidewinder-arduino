@@ -40,7 +40,8 @@ class FFPJoystick
 	void DisableAutoCenter();
 	void SetupHardware();
 	void Poll();
-	void forceTest();
+	uint8_t forceTest(uint8_t wavelength);
+	void updateWaveLength(uint8_t effectID,uint8_t wavelength);
 	 
 	// Joystick Input Report
 	uint8_t	reportId;	// =1
@@ -52,7 +53,6 @@ class FFPJoystick
 	uint8_t  Throttle;
 	uint16_t Button;
 	uint8_t Hat;
-	uint8_t waveTest;
 	int effectId;
 };
 

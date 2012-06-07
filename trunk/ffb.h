@@ -266,10 +266,11 @@ void WaitMs(int ms);
 // Send raw data to the
 void FfbSendData(uint8_t *data, uint16_t len);
 
-//this function wasn't in header before
+//these functions weren't in header before
 void FfbSendSysEx(void *midi_data, uint16_t len);
 void FfbSendEffectOper(uint8_t effectId, uint8_t operation);
 uint16_t UsbUint16ToMidiUint14(uint16_t inUsbValue);
+void FfbSendModify(uint8_t effectId, uint8_t address, uint16_t value);
 
 // Debugging
 //	<index> should be pointer to an index variable whose value should be set to 0 to start iterating.
