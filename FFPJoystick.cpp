@@ -63,7 +63,7 @@ void FFPJoystick::DisableAutoCenter(void)
 											   //since these variables are declared elsewhere
 }
 
-void FFPJoystick::forceTest()
+uint8_t FFPJoystick::forceTest(uint8_t wavelength)
 {
 /*
 	uint8_t command;	// always 0x23	-- start counting checksum from here
@@ -88,9 +88,9 @@ void FFPJoystick::forceTest()
 	FFP_MIDI_Effect_Basic* midi_data = &test;
 	
 		midi_data->duration = UsbUint16ToMidiUint14(500);//100 ms
-		midi_data->magnitude = 40;
-		midi_data->waveLength = waveTest;
-		midi_data->waveForm = 0x02;
+		midi_data->magnitude = 20;
+		midi_data->waveLength = wavelength;
+		midi_data->waveForm = 0x08;
 		midi_data->attackLevel = 0x7f;
 		midi_data->attackTime = 0x0000;
 		midi_data->fadeLevel = 0x7f;
@@ -151,7 +151,14 @@ uint8_t sineFfbData[] =
 	FfbSendSysEx((uint8_t*) midi_data, sizeof(sineFfbData));
 	FfbSendEffectOper(effectId, 0x20);	
 	effectId++;
+	return (effectId - 1);
 	//FfbSendData(sineFfbData,sizeof(sineFfbData));
+}
+
+void FFPJoystick::updateWaveLength(uint8_t effectID,uint8_t wavelength)
+{
+FfbSendModify(2, 0x70, wavelength);
+FfbSendEffectOper(2, 0x20);
 }
 
 void FFPJoystick::Poll(void)
