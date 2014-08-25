@@ -41,16 +41,20 @@ class FFPJoystick
 	void SetupHardware();
 	void Poll();
 	uint8_t forceTest(uint8_t wavelength);
+	uint8_t CreateConstantForce(uint8_t magnitude,uint16_t direction);
+	void updateConstantForce(uint8_t magnitude,uint16_t direction);
 	void updateWaveLength(uint8_t effectID,uint8_t wavelength);
+	void playEffect(uint8_t effectID);
 	 
 	// Joystick Input Report
 	uint8_t	reportId;	// =1
 	int16_t  X;
 	int16_t  Y;
-	int16_t  Z;
-	int8_t  Rz, Rx, Ry;
-	uint8_t  Rudder;
-	uint8_t  Throttle;
+	//int16_t  Z;
+	//int8_t  Rz, Rx, Ry;
+	int8_t Rz;
+	//uint8_t  Rudder;
+	int16_t  Throttle;
 	uint16_t Button;
 	uint8_t Hat;
 	int effectId;
