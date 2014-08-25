@@ -63,6 +63,76 @@ void FFPJoystick::DisableAutoCenter(void)
 											   //since these variables are declared elsewhere
 }
 
+void FFPJoystick::playEffect(uint8_t effectID)
+{
+FfbSendEffectOper(effectID, 0x20);
+}
+
+
+uint8_t FFPJoystick::CreateConstantForce(uint8_t magnitude,uint16_t direction)
+{
+	FFP_MIDI_Effect_Basic test;
+	FFP_MIDI_Effect_Basic* midi_data = &test;
+	
+		midi_data->duration = 0;//UsbUint16ToMidiUint14(500);//100 ms
+		midi_data->magnitude = magnitude;
+		midi_data->waveLength = 0;
+		midi_data->waveForm = 0x12;
+		midi_data->attackLevel = 0x7f;
+		midi_data->attackTime = 0x0000;
+		midi_data->fadeLevel = 0x7f;
+		midi_data->fadeTime = 0x195a;
+		midi_data->direction = direction;
+
+		// Constants
+		midi_data->command = 0x23;
+		midi_data->unknown1 = 0x7F;
+		midi_data->unknown2 = 0x0000;
+		midi_data->unknown3[0] = 0x7F;
+		midi_data->unknown3[1] = 0x64;
+		midi_data->unknown3[2] = 0x00;
+		midi_data->unknown3[3] = 0x10;
+		midi_data->unknown3[4] = 0x4E;
+		midi_data->unknown5 = 0x00;
+		
+		midi_data->param1 = 0x007f;
+
+		if (midi_data->waveForm == 0x12)	// constant
+			midi_data->param2 = 0x0000;
+		else
+			midi_data->param2 = 0x0101;	
+			
+		
+uint8_t sineFfbData[] =
+	{
+		/*0xf0,	// define
+			0x00, 0x01, 0x0a, 0x01, //start sequence*/
+			0x23,//command
+			0x02,//square
+			0x7f,//unknown1
+			0x5a, 0x19,//duration in 2ms intervals
+			0x00, 0x00,//unknown2
+			0x00, 0x00,//direction
+			0x7f, 0x64, 0x00, 0x10, 0x4e,//unknown 3
+			0x7f,//envelope attack level
+			0x00,0x00,//envelope attack time
+			0x16,//magnitude
+			0x5a,0x19,//envelope fade time
+			0x7f,//envelope fade level
+			0x17,//wavelength 
+			0x00,//constant dir
+			0x7f,//constant dir
+			0x00, 0x01, 0x01/*, 0x33,
+		0xf7,
+		0xb5, 0x20, 0x02*/	// play
+	};	
+	FfbSendSysEx((uint8_t*) midi_data, sizeof(sineFfbData));
+	FfbSendEffectOper(effectId, 0x20);	
+	effectId++;
+	return (effectId - 1);
+	//FfbSendData(sineFfbData,sizeof(sineFfbData));
+}
+	
 uint8_t FFPJoystick::forceTest(uint8_t wavelength)
 {
 /*
@@ -87,10 +157,10 @@ uint8_t FFPJoystick::forceTest(uint8_t wavelength)
 	FFP_MIDI_Effect_Basic test;
 	FFP_MIDI_Effect_Basic* midi_data = &test;
 	
-		midi_data->duration = UsbUint16ToMidiUint14(500);//100 ms
-		midi_data->magnitude = 20;
+		midi_data->duration = 0;//UsbUint16ToMidiUint14(500);//100 ms
+		midi_data->magnitude = 120;
 		midi_data->waveLength = wavelength;
-		midi_data->waveForm = 0x08;
+		midi_data->waveForm = 0x12;
 		midi_data->attackLevel = 0x7f;
 		midi_data->attackTime = 0x0000;
 		midi_data->fadeLevel = 0x7f;
@@ -155,6 +225,14 @@ uint8_t sineFfbData[] =
 	//FfbSendData(sineFfbData,sizeof(sineFfbData));
 }
 
+void FFPJoystick::updateConstantForce(uint8_t magnitude,uint16_t direction)
+{
+FfbSendModify(2, 0x74, magnitude);
+FfbSendModify(2, 0x48, direction);
+FfbSendEffectOper(2, 0x20);
+}
+
+
 void FFPJoystick::updateWaveLength(uint8_t effectID,uint8_t wavelength)
 {
 FfbSendModify(2, 0x70, wavelength);
@@ -179,16 +257,15 @@ void FFPJoystick::Poll(void)
 	Button = ((sw_report[4] & 0x7F) << 2) + ((sw_report[3] & 0xC0) >> 6);
 	Hat = sw_report[2] >> 4;
 	Rz = (sw_report[3] & 0x3f) - 32;
-	Z = ((sw_report[5] & 0x3f) << 1) + (sw_report[4] >> 7);
+	Throttle = ((sw_report[5] & 0x3f) << 1) + (sw_report[4] >> 7);
 	if (sw_report[5] & 0x20)
-		Z |= 0b11000000;
+		Throttle |= 0b11000000;
 		
-	if (Z > 63)
-		Z = -1*(255-Z);
+	if (Throttle > 63)
+		Throttle = -1*(255-Throttle);
 	//if ((int8_t)(Z) < 0) 
 		//Z = Z*-1+64;
 
-	Rudder = 0;	// not used at the moment	
 
 //FfbSendData(enableAutoCenterFfbData_1, 2);
 }
