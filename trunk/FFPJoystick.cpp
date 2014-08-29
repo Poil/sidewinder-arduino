@@ -20,6 +20,9 @@ FFPJoystick::FFPJoystick()
 {
 SetupHardware();
 effectId = 2;
+DisableAutoCenter();
+constantForceID = CreateConstantForce(0,0);
+vibrationForceID = CreateVibration(0,0);
 }
 
 /** Configures the board hardware and chip peripherals for the functionality. */
@@ -103,37 +106,14 @@ uint8_t FFPJoystick::CreateConstantForce(uint8_t magnitude,uint16_t direction)
 			midi_data->param2 = 0x0101;	
 			
 		
-uint8_t sineFfbData[] =
-	{
-		/*0xf0,	// define
-			0x00, 0x01, 0x0a, 0x01, //start sequence*/
-			0x23,//command
-			0x02,//square
-			0x7f,//unknown1
-			0x5a, 0x19,//duration in 2ms intervals
-			0x00, 0x00,//unknown2
-			0x00, 0x00,//direction
-			0x7f, 0x64, 0x00, 0x10, 0x4e,//unknown 3
-			0x7f,//envelope attack level
-			0x00,0x00,//envelope attack time
-			0x16,//magnitude
-			0x5a,0x19,//envelope fade time
-			0x7f,//envelope fade level
-			0x17,//wavelength 
-			0x00,//constant dir
-			0x7f,//constant dir
-			0x00, 0x01, 0x01/*, 0x33,
-		0xf7,
-		0xb5, 0x20, 0x02*/	// play
-	};	
-	FfbSendSysEx((uint8_t*) midi_data, sizeof(sineFfbData));
+	FfbSendSysEx((uint8_t*) midi_data, standardEffectPacketSize);
 	FfbSendEffectOper(effectId, 0x20);	
 	effectId++;
 	return (effectId - 1);
 	//FfbSendData(sineFfbData,sizeof(sineFfbData));
 }
 	
-uint8_t FFPJoystick::forceTest(uint8_t wavelength)
+uint8_t FFPJoystick::CreateVibration(uint8_t magnitude,uint8_t wavelength)
 {
 /*
 	uint8_t command;	// always 0x23	-- start counting checksum from here
@@ -158,9 +138,9 @@ uint8_t FFPJoystick::forceTest(uint8_t wavelength)
 	FFP_MIDI_Effect_Basic* midi_data = &test;
 	
 		midi_data->duration = 0;//UsbUint16ToMidiUint14(500);//100 ms
-		midi_data->magnitude = 120;
+		midi_data->magnitude = 0x16;
 		midi_data->waveLength = wavelength;
-		midi_data->waveForm = 0x12;
+		midi_data->waveForm = 0x02;//sine
 		midi_data->attackLevel = 0x7f;
 		midi_data->attackTime = 0x0000;
 		midi_data->fadeLevel = 0x7f;
@@ -185,17 +165,7 @@ uint8_t FFPJoystick::forceTest(uint8_t wavelength)
 		else
 			midi_data->param2 = 0x0101;	
 			
-	
-	// All effects data start with this data
-uint8_t constantLeftFfbData[] =
-	{
-		0xf0,	// define
-			0x00, 0x01, 0x0a, 0x01, 0x23, 0x05, 0x7f, 0x5a, 0x19, 0x00, 0x00, 0x00, 0x00, 0x7f, 0x64, 0x00, 0x10, 0x4e, 0x7f, 0x00, 0x00, 0x7f, 0x5a, 0x19, 0x7f, 0x01, 0x00, 0x7f, 0x00, 0x01, 0x01, 0x33,
-		0xf7,
-		0xb5, 0x20, 0x02	// play
-	};
-	
-uint8_t sineFfbData[] =
+			uint8_t sineFfbData[] =
 	{
 		/*0xf0,	// define
 			0x00, 0x01, 0x0a, 0x01, //start sequence*/
@@ -218,6 +188,8 @@ uint8_t sineFfbData[] =
 		0xf7,
 		0xb5, 0x20, 0x02*/	// play
 	};	
+			
+	
 	FfbSendSysEx((uint8_t*) midi_data, sizeof(sineFfbData));
 	FfbSendEffectOper(effectId, 0x20);	
 	effectId++;
@@ -225,18 +197,19 @@ uint8_t sineFfbData[] =
 	//FfbSendData(sineFfbData,sizeof(sineFfbData));
 }
 
-void FFPJoystick::updateConstantForce(uint8_t magnitude,uint16_t direction)
+void FFPJoystick::sendConstantForce(uint8_t magnitude,uint16_t direction)
 {
-FfbSendModify(2, 0x74, magnitude);
-FfbSendModify(2, 0x48, direction);
-FfbSendEffectOper(2, 0x20);
+FfbSendModify(constantForceID, 0x74, magnitude);
+FfbSendModify(constantForceID, 0x48, direction);
+FfbSendEffectOper(constantForceID, 0x20);
 }
 
 
-void FFPJoystick::updateWaveLength(uint8_t effectID,uint8_t wavelength)
+void FFPJoystick::sendVibration(uint8_t magnitude,uint8_t wavelength)
 {
-FfbSendModify(2, 0x70, wavelength);
-FfbSendEffectOper(2, 0x20);
+FfbSendModify(vibrationForceID, 0x74, magnitude);
+FfbSendModify(vibrationForceID, 0x70, wavelength);
+FfbSendEffectOper(vibrationForceID, 0x20);
 }
 
 void FFPJoystick::Poll(void)

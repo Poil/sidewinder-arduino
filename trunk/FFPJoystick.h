@@ -40,11 +40,14 @@ class FFPJoystick
 	void DisableAutoCenter();
 	void SetupHardware();
 	void Poll();
-	uint8_t forceTest(uint8_t wavelength);
+	uint8_t CreateVibration(uint8_t magnitude,uint8_t wavelength);
 	uint8_t CreateConstantForce(uint8_t magnitude,uint16_t direction);
-	void updateConstantForce(uint8_t magnitude,uint16_t direction);
-	void updateWaveLength(uint8_t effectID,uint8_t wavelength);
+	
+	void sendConstantForce(uint8_t magnitude,uint16_t direction);
+	void sendVibration(uint8_t effectID,uint8_t wavelength);
 	void playEffect(uint8_t effectID);
+	
+	int getButton(int buttonNum){return ((Button & (1 << buttonNum)) >>buttonNum);}
 	 
 	// Joystick Input Report
 	uint8_t	reportId;	// =1
@@ -58,6 +61,9 @@ class FFPJoystick
 	uint16_t Button;
 	uint8_t Hat;
 	int effectId;
+	int constantForceID;
+	int vibrationForceID;
+	const static int standardEffectPacketSize = 27;
 };
 
 #endif
