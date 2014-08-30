@@ -143,8 +143,8 @@ uint8_t FFPJoystick::CreateVibration(uint8_t magnitude,uint8_t wavelength)
 		midi_data->waveForm = 0x02;//sine
 		midi_data->attackLevel = 0x7f;
 		midi_data->attackTime = 0x0000;
-		midi_data->fadeLevel = 0x7f;
-		midi_data->fadeTime = 0x195a;
+		midi_data->fadeLevel = 0x00;
+		midi_data->fadeTime = 0x0000;
 		midi_data->direction = 0x0000;
 
 		// Constants
