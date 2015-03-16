@@ -1,0 +1,1 @@
+This project is based on http://code.google.com/p/adapt-ffb-joy/ and is meant as a standalone library allowing you to make use of the Microsoft Force Feedback Pro from the arduino interface.
